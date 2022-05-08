@@ -1,0 +1,23 @@
+sum_all_decades_df<-read.csv("C:/Users/shawn/OneDrive/Shawn/CSU_global/MIS581/project_r_code/name_files/all_decades_summary_table.csv")
+Ratio.of.GN.Names.to.All.Names<-sum_all_decades_df$X..of.GN.Names/2000
+q_test_set<-data.frame(sum_all_decades_df$Years,
+                       Ratio.of.GN.Names.to.All.Names,
+                       sum_all_decades_df$Ratio.of.GN.Occurrances.to.Total.Occurrances)
+xaxis_labels<-unlist(q_test_set[1])
+xaxis<-c(1:length(xaxis_labels))
+
+
+#plot quantity of names
+ratio_quan_gn_to_all<-as.numeric(unlist(q_test_set[2]))
+ratio_occur_gn_to_all<-as.numeric(unlist(q_test_set[3]))
+
+#plot ratio of quantity
+plot(xaxis,ratio_quan_gn_to_all,main="Ratio: Quantity of GN Names versus All Names\nBy Decade: 1880-2020",
+     xlab="",xaxt="n",ylab="Ratio",type="l",lwd=2,col="blue",cex.main=0.9,cex.axis=0.8)
+axis(1, at=seq_along(xaxis),labels=as.character(xaxis_labels), las=2,cex=0.6)
+
+
+#plot ratio of occurrences
+plot(xaxis,ratio_occur_gn_to_all,main="Ratio: Occurrances of GN Names versus All Names\nBy Decade: 1880-2020",
+     xlab="",xaxt="n",ylab="Ratio",type="l",lwd=2,col="green",ylim=c(0,0.6),cex.main=0.9,cex.axis=0.8)
+axis(1, at=seq_along(xaxis),labels=as.character(xaxis_labels), las=2,cex=0.6)

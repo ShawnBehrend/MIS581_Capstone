@@ -1,0 +1,78 @@
+#input what years will be analyzed, based on available data files
+decade1<-c(1880:1889)
+decade2<-decade1+10
+decade3<-decade2+10
+decade4<-decade3+10
+decade5<-decade4+10
+decade6<-decade5+10
+decade7<-decade6+10
+decade8<-decade7+10
+decade9<-decade8+10
+decade10<-decade9+10
+decade11<-decade10+10
+decade12<-decade11+10
+decade13<-decade12+10
+decade14<-c(2010:2020)
+#grab first and last year for use in file names
+all_years<-decade14
+first_year<-min(all_years)
+last_year<-max(all_years)
+
+# input names to be searched on
+comp_names_df<-read.csv(paste0("C:/Users/shawn/OneDrive/Shawn/CSU_global/MIS581/project_r_code/name_files/",
+                               first_year,"_",last_year,"/",last_year,"_m_names_top1000.txt"), fileEncoding="UTF-8-BOM", 
+                        colClasses=c("character"))
+comp_names<-comp_names_df[[2]]
+
+# begin find_name loop
+#choose number of searchnames
+inames<-c(1:length(comp_names))
+#establish first index finding searchname
+iname<-1
+
+
+# set up a data frame full of "NA" to store the desired name and sex with each year and rank from the data files
+  name_rank_f<-data.frame(matrix(NA,length(comp_names),5))
+  name_rank_m<-data.frame(matrix(NA,length(comp_names),5))
+
+ comp_file_f <- read.csv(paste0("C:/Users/shawn/OneDrive/Shawn/CSU_global/MIS581/project_r_code/name_files/",
+                              first_year,"_",last_year,"/",last_year,"_f_names_top1000.txt"),
+                       colClasses=c(Name="character",Sex="character"))
+ 
+ comp_file_m <- read.csv(paste0("C:/Users/shawn/OneDrive/Shawn/CSU_global/MIS581/project_r_code/name_files/",
+                                first_year,"_",last_year,"/",last_year,"_m_names_top1000.txt"),
+                         colClasses=c(Name="character",Sex="character"))
+ 
+ #start loop through names
+ for (iname in inames) {
+#establish searchname
+   searchname<-comp_names[iname]
+       find_name_f<-c("NA",searchname,"F","NA","NA","NA")
+       find_name_m<-c("NA",searchname,"M","NA","NA","NA")
+# Look for row that search name is in using grep. 
+# If length of yob_file_sex$Name is greater than zero, replace dummy row with this row #
+#----female name files---
+      if(length(grep(paste("^",searchname,"$", sep=""),comp_file_f$Name))>0) {
+      #save row info in new variable
+        find_name_f<-c(comp_file_f[(which(comp_file_f$Name==searchname)),])
+      }
+      # Use index to save desired name data to the data frame
+      name_rank_f[iname,]<-c(searchname,find_name_f[3],find_name_f[4],find_name_f[5],find_name_f[6])
+#----male name files---
+      if(length(grep(paste("^",searchname,"$", sep=""),comp_file_m$Name))>0) {
+        #save row info in new variable
+        find_name_m<-c(comp_file_m[(which(comp_file_m$Name==searchname)),])
+      }
+      # Use index to save desired name data to the data frame. Use female year to know which should be eliminated.
+      name_rank_m[iname,]<-c(searchname,find_name_m[3],find_name_m[4],find_name_m[5],find_name_f[6])
+        iname=iname+1
+          }
+    #add column names to data frame
+    names(name_rank_f)<-c("Name","Sex","Occurrance","Rank","Year")
+    names(name_rank_m)<-c("Name","Sex","Occurrance","Rank","Year")
+  
+    #save names to data file
+    write.csv(x=name_rank_f,file=paste0("C:/Users/shawn/OneDrive/Shawn/CSU_global/MIS581/project_r_code/name_files/",
+                                      first_year,"_",last_year,"/comp_gn_names_F_",last_year,".csv"))
+    write.csv(x=name_rank_m,file=paste0("C:/Users/shawn/OneDrive/Shawn/CSU_global/MIS581/project_r_code/name_files/",
+                                        first_year,"_",last_year,"/comp_gn_names_M_",last_year,".csv"))
